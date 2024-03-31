@@ -1,0 +1,73 @@
+{% extends 'flatpages/default.html' %}
+
+{% load censor %}
+
+
+{% block title %}
+News
+{% endblock title %}
+
+{% block content %}
+<h1>Все новости</h1>
+<h3>{{ time_now|date:'d.m.Y' }}</h3>
+<p>Количество новостей: {{ news_list|length }}</p>
+<hr>
+
+{% if perms.news.add_post %}
+<a href="{% url 'post_create_news' %}">Добавить новость</a>
+{% endif %}
+
+<hr>
+{% if news_list %}
+    <table>
+        <tr>
+            <th>Заголовок</th>
+            <th>Дата публикации:</th>
+            <th>Текст</th>
+
+            {% if perms.news.change_post or perms.news.delete_post %}
+            <td>Действия</td>
+            {% endif %}
+
+        </tr>
+
+        {% for news_item in news_list %}
+
+        <tr>
+            <th>{{ news_item.title }}</th>
+            <th>{{ news_item.creation_date|date:'d.m.Y' }}</th>
+            <th>{{ news_item.text|truncatewords:20|censor }}</th>
+            <td>
+                {% if perms.news.change_post %}
+                <a href="{% url 'post_edit' pk=news_item.id %}">Изменить</a>
+                {% endif %}
+                {% if perms.news.delete_post %}
+                <a href="{% url 'post_delete' pk=news_item.id %}">Удалить</a>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+{% else %}
+    <h2>Новостей сегодня нет! Как это ни странно.</h2>
+{% endif %}
+<hr>
+
+   {% if page_obj.has_previous %}
+       <a href="?page=1">1</a>
+       {% if page_obj.previous_page_number != 1 %}
+           ...
+           <a href="?page={{ page_obj.previous_page_number }}">{{ page_obj.previous_page_number }}</a>
+       {% endif %}
+   {% endif %}
+
+   {{ page_obj.number }}
+
+   {% if page_obj.has_next %}
+       <a href="?page={{ page_obj.next_page_number }}">{{ page_obj.next_page_number }}</a>
+       {% if paginator.num_pages != page_obj.next_page_number %}
+           ...
+           <a href="?page={{ page_obj.paginator.num_pages }}">{{ page_obj.paginator.num_pages }}</a>
+       {% endif %}
+   {% endif %}
+{% endblock content %}

@@ -1,0 +1,24 @@
+{% extends 'flatpages/default.html' %}
+
+{% load censor %}
+
+{% block title %}
+{{ news.title }}
+{% endblock title %}
+
+{% block content %}
+<h1>{{ news.title }}</h1>
+<p><strong>Автор:</strong> {{ news.author.user.username }}</p>
+<p><strong>Дата публикации:</strong> {{ news.creation_date|date:"d.m.Y" }}</p>
+<p><strong>Рубрика:</strong>
+    {% for category in news.categories.all %}
+        {{ category.name }}
+        {% if not forloop.last %}, {% endif %}
+    {% endfor %}
+</p>
+<p><strong>Заголовок:</strong> {{ news.title }}</p>
+<p><strong>Рейтинг:</strong> {{ news.rating }}</p>
+<div class="news-content">
+  {{ news.text|linebreaks|censor }}
+</div>
+{% endblock content %}

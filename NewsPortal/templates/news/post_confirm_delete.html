@@ -1,0 +1,9 @@
+{% extends 'flatpages/default.html' %}
+
+{% block content %}
+<form method="post">
+    {% csrf_token %}
+    <p>Вы уверены, что хотите удалить этот пост?</p>
+    <button type="submit">Да, удалить</button>
+</form>
+{% endblock content %}
